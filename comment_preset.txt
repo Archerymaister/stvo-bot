@@ -1,9 +1,8 @@
-(tag1,tag3)
-
-# Attention please!
+(01234567-89aa-bbcc-ddee-ffffffffffff, 01234567-89aa-bbcc-ddee-ffffffffffff)
+# Handy tip coming along!
 A towel, it says, is about the most massively useful thing an interstellar hitchhiker can have.
 
-(tag2)
 
+(01234567-89aa-bbcc-ddee-ffffffffffff)
 # Attention please!
-Fly you fools!
+Any markdown should be valid!

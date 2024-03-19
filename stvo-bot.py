@@ -60,6 +60,10 @@ def check_for_new_wiki_revision(wiki):
         predefined_comments.clear()
         load_comments()
 
+def get_file_contents(filename):
+    with open(filename, "r") as file:
+        return file.read()
+
 
 numberMatcher = re.compile(r'.*\d+.*')
 signMatcher = re.compile(r'.*(?:(?<=.{5}vz|.schild|zeichen)\W?(\d{3,4}[-]?\d{0,3})).*')
@@ -68,7 +72,7 @@ lawMatcher = re.compile(r'§\d+')
 flair_match_line = re.compile(r'\(((?:[0-9a-f-]{36}[, ]{0,2})+)\)')
 flair_match_ids = re.compile(r'[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}')
 
-wiki_page_sticky_comment = "sticky_comment"
+wiki_page_sticky_comment = "stvo_bot_stickies"
 
 predefined_comments = dict()
 
@@ -96,22 +100,18 @@ if __name__ == "__main__":
     wiki = sub.wiki
 
     if not wiki_page_exists(wiki, wiki_page_sticky_comment):
-        print("Predefined comments page does not exist!")
-        exit(2)
+        print("Predefined comments page does not exist! Creating it. Please edit it.")
+        wiki.create(name=wiki_page_sticky_comment, content=get_file_contents("comment_preset.txt"),
+                    reason="Automatically created by u/StVO-Bot")
 
     latest_revision = wiki[wiki_page_sticky_comment]
-    print("latest_revision" + str(latest_revision.revision_date))
-    print("last_revision_check" + str(last_revision_check))
     if latest_revision.revision_date > last_revision_check:
         last_revision_check = latest_revision.revision_date
         load_comments()
-        print("Comments updated!")
 
     for post in sub.stream.submissions(skip_existing=True):
         # check for updated wiki
         latest_revision = wiki[wiki_page_sticky_comment]
-        print("latest_revision" + str(latest_revision.revision_date))
-        print("last_revision_check" + str(last_revision_check))
         if latest_revision.revision_date > last_revision_check:
             last_revision_check = latest_revision.revision_date
             load_comments()
@@ -119,14 +119,11 @@ if __name__ == "__main__":
 
         try:
             if post.link_flair_template_id not in predefined_comments:
-                print("Kein Kommentar!")
                 continue
         except AttributeError:
             # When the post has no flair, an AttributeError is thrown. We just continue at this point.
-            print("Kein Kommentar!")
             continue
 
-        print("Kommentar!")
         reply = post.reply(predefined_comments[post.link_flair_template_id])
         reply.mod.lock()
         reply.mod.distinguish(sticky=True)
