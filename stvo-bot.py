@@ -60,6 +60,7 @@ def check_for_new_wiki_revision(wiki):
         predefined_comments.clear()
         load_comments()
 
+
 def get_file_contents(filename):
     with open(filename, "r") as file:
         return file.read()
